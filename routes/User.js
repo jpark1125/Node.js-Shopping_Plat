@@ -1,7 +1,7 @@
 const express = require("express");
 const { UserController: controller } = require("../controller");
 
-const { Check } = require("../utils/isAuth");
+//const { Check } = require("../utils/isAuth");
 
 const router = express.Router();
 

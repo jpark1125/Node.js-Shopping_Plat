@@ -34,7 +34,9 @@ module.exports = {
           email: email,
           id: id,
           passwd: hash,
-          refreshtoken: rtoken,
+          //refreshtoken: rtoken,
+          xauth: token,
+          rxauth: rtoken,
         },
         {
           transaction: tx,

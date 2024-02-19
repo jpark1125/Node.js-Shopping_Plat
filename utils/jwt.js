@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const redisClient = require("../middleware/redis").client;
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 module.exports = {
@@ -31,6 +32,14 @@ module.exports = {
       algorithm: "HS256",
       expiresIn: "7d",
     });
+    //레디스
+    redisClient.set(
+      `refreshToken:$
+    {payload.id}`,
+      retoken,
+      { EX: "1d" }
+    );
+
     return retoken;
   },
   verifyRefreshToken: (token) => {

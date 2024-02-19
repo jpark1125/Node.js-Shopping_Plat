@@ -21,7 +21,8 @@ module.exports = {
       let { title } = req.body;
       console.log(req.files);
       let { content } = req.body;
-      let { xauth } = req.body;
+      let { xauth } = req.headers;
+      console.log("xaut : ", xauth);
 
       let decoded = jwt.verifyToken(xauth);
 
@@ -42,7 +43,7 @@ module.exports = {
 
   Delete: async (req, res) => {
     try {
-      let { xauth } = req.body;
+      let { xauth } = req.headers;
 
       let decoded = jwt.verifyToken(xauth);
 
@@ -96,7 +97,7 @@ module.exports = {
 
   Update: async (req, res) => {
     try {
-      let { xauth } = req.body;
+      let { xauth } = req.headers;
 
       let decoded = jwt.verifyToken(xauth);
 

@@ -2,7 +2,7 @@ const redis = require("redis");
 const redisClient = redis.createClient({
   host: "localhost",
   port: 6379,
-  // 다른 설정 필요 시 추가
+  //password:
 });
 
 redisClient.on("connect", () => {
