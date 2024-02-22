@@ -21,18 +21,14 @@ sequelize
   });
 
 // 레디스 연결
-app.get("/redis", async (req, res) => {
+(async () => {
   try {
-    await redisClient.connect(); // redis 연결
-    await redisClient.set("test", "Redis is connected!");
-    const value = await redisClient.get("test");
-    await redisClient.quit();
-    res.send(value);
-  } catch (error) {
-    console.error("Redis 연결 테스트 실패:", error);
-    res.status(500).send("Redis 연결 테스트 실패");
+    await redisClient.connect();
+    console.log("Redis 클라이언트가 서버에 연결되었습니다.");
+  } catch (err) {
+    console.error("Redis 클라이언트 연결 에러", err);
   }
-});
+})();
 
 app.use(express.json());
 app.use(cors());

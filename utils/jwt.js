@@ -32,13 +32,13 @@ module.exports = {
       algorithm: "HS256",
       expiresIn: "7d",
     });
-    //레디스
-    redisClient.set(
-      `refreshToken:$
-    {payload.id}`,
-      retoken,
-      { EX: "1d" }
-    );
+    // //레디스
+    // redisClient.set(
+    //   `refreshToken:$
+    // {payload.id}`,
+    //   retoken,
+    //   { EX: "1d" }
+    // );
 
     return retoken;
   },

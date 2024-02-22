@@ -3,6 +3,7 @@ const jwt = require("../utils/jwt");
 const { createRefreshToken } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
 const shortid = require("shortid");
+const redisClient = require("../middleware/redis");
 require("dotenv").config();
 const secretKey = "" + process.env.YOURREFRESHKEY;
 
@@ -75,6 +76,9 @@ module.exports = {
         });
         rtoken = createRefreshToken({ id: rows.id });
 
+        //redis에 리프레시 토큰 저장
+        await redisClient.set(`refreshToken:${rows.id}`, rtoken, "EX", 86400);
+
         await Users.update(
           {
             refreshtoken: rtoken,
@@ -96,27 +100,35 @@ module.exports = {
   IssueToken: async (req, res) => {
     try {
       let { rxauth } = req.headers;
-
       const issueId = jwt.verifyRefreshToken(rxauth);
 
-      const isTrue = await Users.findOne({
-        where: {
-          id: issueId.user_id,
-          refreshtoken: rxauth,
-        },
-      });
-
-      if (isTrue) {
-        let token = jwt.createToken({
-          id: isTrue.id,
+      // Redis에서 리프레시 토큰 검증
+      const storedToken = await redisClient.get(
+        `refreshToken:${issueId.user_id}`
+      );
+      if (rxauth === storedToken) {
+        const isTrue = await Users.findOne({
+          where: {
+            id: issueId.user_id,
+            // refreshtoken: rxauth, // 이전에 사용하던거 redis 로 변경하면서 줏ㅓㄱ
+          },
         });
 
-        return res.status(200).json({ xauth: token });
+        if (isTrue) {
+          let token = jwt.createToken({
+            id: isTrue.id,
+          });
+
+          return res.status(200).json({ xauth: token });
+        } else {
+          return res.status(200).json({ result: "failed" });
+        }
       } else {
-        res.status(200).json({ result: "failed" });
+        return res.status(401).json({ error: "Invalid refresh token" });
       }
     } catch (err) {
       console.log(err);
+      return res.status(500).json({ error: "Internal server error" });
     }
   },
 
