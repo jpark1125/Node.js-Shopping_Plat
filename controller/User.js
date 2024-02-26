@@ -10,7 +10,7 @@ const secretKey = "" + process.env.YOURREFRESHKEY;
 module.exports = {
   Signup: async (req, res) => {
     try {
-      let { name, email, id, passwd } = req.body;
+      let { name, email, id, passwd, userType } = req.body;
 
       const salt = bcrypt.genSaltSync(8);
       const hash = await bcrypt.hash(passwd, salt);
@@ -18,9 +18,11 @@ module.exports = {
 
       let token = jwt.createToken({
         id: beforeId,
+        userType: userType, // 토큰에도 userType을 추가하여 사용자 타입을 나중에 확인할 수 있게 함
       });
       let rtoken = jwt.createRefreshToken({
         id: beforeId,
+        userType: userType, // 토큰에도 userType을 추가하여 사용자 타입을 나중에 확인할 수 있게 함
       });
 
       const tx = await sequelize.transaction();
@@ -35,6 +37,7 @@ module.exports = {
           email: email,
           id: id,
           passwd: hash,
+          userType: userType, // 데이터베이스에 userType도 저장하여 사용자가 구매자인지 판매자인지 구분
           //refreshtoken: rtoken,
           xauth: token,
           rxauth: rtoken,
@@ -73,6 +76,7 @@ module.exports = {
         token = jwt.createToken({
           user_id: rows.id,
           id: rows.id,
+          userType: rows.userType,
         });
         rtoken = createRefreshToken({ id: rows.id });
 
@@ -117,6 +121,7 @@ module.exports = {
         if (isTrue) {
           let token = jwt.createToken({
             id: isTrue.id,
+            userType: isTrue.userType, // 유저 타입 정보를 엑세스 토큰에 추가
           });
 
           return res.status(200).json({ xauth: token });

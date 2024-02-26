@@ -21,6 +21,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(11),
         allowNull: false,
       },
+      userType: {
+        type: ENUM("buyer", "seller"),
+        allowNull: false, //db에 아직 추가 안함
+      },
       passwd: {
         type: DataTypes.STRING(100),
         allowNull: false,
