@@ -1,6 +1,6 @@
 const { Board } = require("../models");
 const { Op } = require("sequelize");
-const { User } = require("../models");
+const { Users } = require("../models");
 const jwt = require("../utils/jwt");
 const { sequelize, QueryTypes } = require("../models");
 //const multer = require("multer");

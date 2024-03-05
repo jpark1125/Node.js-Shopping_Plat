@@ -11,6 +11,7 @@ module.exports = {
       {
         user_id: payload.user_id,
         id: payload.id,
+        userType: payload.userType,
       },
       ACCESS_TOKEN_SECRET,
       {
@@ -28,10 +29,14 @@ module.exports = {
     return decoded;
   },
   createRefreshToken: (payload) => {
-    const retoken = jwt.sign({ user_id: payload.id }, REFRESH_TOKEN_SECRET, {
-      algorithm: "HS256",
-      expiresIn: "7d",
-    });
+    const retoken = jwt.sign(
+      { user_id: payload.id, userType: payload.userType },
+      REFRESH_TOKEN_SECRET,
+      {
+        algorithm: "HS256",
+        expiresIn: "7d",
+      }
+    );
     // //레디스
     // redisClient.set(
     //   `refreshToken:$
